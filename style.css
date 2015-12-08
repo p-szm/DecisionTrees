@@ -13,8 +13,14 @@ body {
   padding: 5px;
 }
 
-input {
-  margin: 10px;
+label {
+  display: inline-block;
+  width: 240px;
+  text-align: right
+}
+
+.input-div {
+  margin-bottom: 10px;
 }
 
 svg {

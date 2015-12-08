@@ -240,7 +240,7 @@ var update = function(delay) {
         var result = prompt('Enter the value for the node', d.value);
         if(result) {
             d.value = parseFloat(result);
-            d3.select(this).text(d.value);
+            d3.select(this).text(currency + d.value + unit);
         }
       })
       .on('mouseover', function(d) {
@@ -291,8 +291,8 @@ var update = function(delay) {
       .attr('text-anchor', 'end').on('click', function(d) {
         var result = prompt('Enter the probability for this random event', d.probability);
         if(result) {
-            d.probability = result;
-            d3.select(this).text(d.probability);
+            d.probability = result/100.0;
+            d3.select(this).text(d.probability * 100 + '%');
         }
       })
       .on('mouseover', function(d) {
@@ -372,13 +372,36 @@ var updateNodeSize = function(nSize) {
   nodeSize = nSize;
   update(0);
 }
-
 d3.select('#node-radius').on('input', function() {
     updateNodeSize(this.value);
   });
 
-// Reset the slider
+// Currency
+var updateCurrency = function(curr) {
+  currency = curr;
+  d3.selectAll('.valueLabel')
+      .text(function(d) {return currency + d.value + unit;});
+}
+d3.select('#value-currency').on('input', function() {
+    updateCurrency(this.value);
+  });
+
+// Unit
+var updateUnit = function(u) {
+  unit = u;
+  d3.selectAll('.valueLabel')
+      .text(function(d) {return currency + d.value + unit;});
+}
+d3.select('#value-unit').on('input', function() {
+    updateUnit(this.value);
+  });
+
+// Initialise the input to the proper values
 updateNodeSize(nodeSize);
+d3.select('#value-currency')
+    .property('value', currency);
+d3.select('#value-unit')
+    .property('value', unit);
 
 // Draw
 update(defaultDelay);
