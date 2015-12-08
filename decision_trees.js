@@ -227,8 +227,14 @@ var update = function(delay) {
   valueLabels.enter().append('text')
       .classed('valueLabel', true)
       .text(function(d) {return currency + d.value + unit;})
-      .attr('x', function(d){return (d.parent) ? d.parent.py-nodeSize-3 : d.y-nodeSize;})
-      .attr('y', function(d) {return (d.parent) ? d.parent.px+nodeSize/2 : d.x+nodeSize/2;})
+      .attr('x', function(d){
+        var x = (d.parent) ? d.parent.py : d.y;
+        return x - nodeSize;
+      })
+      .attr('y', function(d) {
+        var y = (d.parent) ? d.parent.px : d.x;
+        return y + nodeSize/2;
+      })
       .attr('dy', '0.3em')
       .attr('text-anchor', 'end').on('click', function(d) {
         var result = prompt('Enter the value for the node', d.value);
@@ -249,8 +255,12 @@ var update = function(delay) {
   nameLabels.enter().append('text')
       .classed('nameLabel', true)
       .text(function(d) {return d.name;})
-      .attr('x', function(d){return (d.parent) ? d.parent.py-nodeSize : d.y-nodeSize;})
-      .attr('y', function(d) {return (d.parent) ? d.parent.px-nodeSize/2 : d.x-nodeSize/2;})
+      .attr('x', function(d){
+        return (d.parent) ? d.parent.py-nodeSize : d.y-nodeSize;
+      })
+      .attr('y', function(d) {
+        return (d.parent) ? d.parent.px-nodeSize/2 : d.x-nodeSize/2;
+      })
       .attr('dy', '0.3em')
       .attr('text-anchor', 'end').on('click', function(d) {
         var result = prompt('Enter the name of the node', d.name);
@@ -271,8 +281,12 @@ var update = function(delay) {
   probabilityLabels.enter().append('text')
       .classed('probabilityLabel', true)
       .text(function(d) {return d.probability + '%';})
-      .attr('x', function(d){return (d.parent) ? d.parent.py-nodeSize : d.y-nodeSize;})
-      .attr('y', function(d) {return (d.parent) ? d.parent.px : d.x;})
+      .attr('x', function(d){
+        return (d.parent) ? d.parent.py-nodeSize : d.y-nodeSize;
+      })
+      .attr('y', function(d) {
+        return (d.parent) ? d.parent.px : d.x;
+      })
       .attr('dy', '0.3em')
       .attr('text-anchor', 'end').on('click', function(d) {
         var result = prompt('Enter the probability for this random event', d.probability);
@@ -300,23 +314,55 @@ var update = function(delay) {
 
   // Update nodes
   t.selectAll('.node')
-      .attr('x', function(d) {d.py = d.y; return d.y-nodeSize*1.42/2;})
-      .attr('y', function(d) {d.px = d.x; return d.x-nodeSize*1.42/2;})
+      .attr('x', function(d) {
+        d.py = d.y;
+        return d.y-nodeSize*1.42/2;
+      })
+      .attr('y', function(d) {
+        d.px = d.x;
+        return d.x-nodeSize*1.42/2;
+      })
       .attr('width', 1.42*nodeSize)
       .attr('height', 1.42*nodeSize)
-      .attr('rx', function(d) {return d.type == 'decision' ? 0 : nodeSize*1.42/2;})
-      .attr('ry', function(d) {return d.type == 'decision' ? 0 : nodeSize*1.42/2;});
+      .attr('rx', function(d) {
+        return d.type == 'decision' ? 0 : nodeSize*1.42/2;
+      })
+      .attr('ry', function(d) {
+        return d.type == 'decision' ? 0 : nodeSize*1.42/2;
+      });
 
   // Update labels
-  t.selectAll('.valueLabel')
-      .attr('x', function(d) {return d.y-nodeSize})
-      .attr('y', function(d) {return d.x+nodeSize/2});
-  t.selectAll('.nameLabel')
-      .attr('x', function(d) {return d.y-nodeSize})
-      .attr('y', function(d) {return d.x-nodeSize/2});
-  t.selectAll('.probabilityLabel')
-      .attr('x', function(d) {return d.y-nodeSize})
-      .attr('y', function(d) {return d.x});
+  if (nodeSize >= 22) {
+    t.selectAll('.valueLabel')
+        .attr('x', function(d) {return d.y-nodeSize})
+        .attr('y', function(d) {return d.x+nodeSize/2})
+        .attr('text-anchor', 'end')
+        .attr('dy', '0.3em');
+    t.selectAll('.nameLabel')
+        .attr('x', function(d) {return d.y-nodeSize})
+        .attr('y', function(d) {return d.x-nodeSize/2})
+        .attr('text-anchor', 'end')
+        .attr('dy', '0.3em');
+    t.selectAll('.probabilityLabel')
+        .attr('x', function(d) {return d.y-nodeSize})
+        .attr('y', function(d) {return d.x})
+        .attr('dy', '0.3em');
+  }
+  else {
+    t.selectAll('.valueLabel')
+        .attr('x', function(d) {return d.y;})
+        .attr('y', function(d) {return d.x+nodeSize/2+6})
+        .attr('text-anchor', 'middle')
+        .attr('dy', '1em');
+    t.selectAll('.nameLabel')
+        .attr('x', function(d) {return d.y;})
+        .attr('y', function(d) {return d.x-nodeSize/2-8})
+        .attr('text-anchor', 'middle')
+        .attr('dy', '0');
+    t.selectAll('.probabilityLabel')
+        .attr('x', function(d) {return d.y-nodeSize})
+        .attr('y', function(d) {return d.x});
+  }
 }
 
 // For changing the node radius
