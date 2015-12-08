@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <link rel='stylesheet' type='text/css' href='reset.css'>
+    <link rel='stylesheet' type='text/css' href='style.css'>
+    <link rel='stylesheet' type='text/css' href="./bower_components/d3-context-menu/css/d3-context-menu.css">
+    <title>Decision trees</title>
+    <style>
+    </style>
+  </head>
+  <body>
+    <p>
+      <label for="node-radius" 
+             style="display: inline-block; width: 240px; text-align: right">
+             Node radius = <span id="node-radius-value">…</span>
+      </label>
+      <input type="range" min="1" max="80" id="node-radius">
+    </p>
+    <script src="./bower_components/d3/d3.min.js"></script>
+    <script src="./bower_components/d3-context-menu/js/d3-context-menu.js"></script>
+    <script src='decision_trees.js'></script>
+  </body>
+</html>

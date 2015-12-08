@@ -1,0 +1,48 @@
+* {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  box-sizing: border-box;
+  /*border: 1px solid red !important;*/
+}
+
+body {
+  font-family: 'Source Sans Pro', sans-serif;
+  font-weight: 300;
+  font-size: 12px;
+  padding: 5px;
+}
+
+input {
+  margin: 10px;
+}
+
+svg {
+  display: block;
+  margin: 0 auto;
+}
+
+path.link {
+  fill: none;
+  stroke: black;
+  stroke-width: 1;
+}
+
+rect.node {
+  fill: white;
+  stroke: black;
+  stroke-width: 1;
+  cursor: pointer
+}
+
+rect.highlight {
+  fill: #fed;
+}
+
+text.highlight  {
+  fill: red;
+}
+
+rect.dragged {
+  fill: #da9;
+}
