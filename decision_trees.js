@@ -8,7 +8,6 @@ var border = true;
 var nodeSize = 30,
   initialType = 'randomEvent',
   initialValue = '0',
-  initialName = 'Name',
   initialProbability = '0',
   unit = '',
   currency = '$',
@@ -151,7 +150,7 @@ var update = function(delay) {
   nodes.forEach(function(d) {
     if (!d.hasOwnProperty('type')) {
       d.type = initialType;
-      d.name = initialName;
+      d.name = 'Node ' + d.id;
       d.value = initialValue;
       d.probability = initialProbability;
     }
@@ -382,7 +381,7 @@ var updateCurrency = function(curr) {
   d3.selectAll('.valueLabel')
       .text(function(d) {return currency + d.value + unit;});
 }
-d3.select('#value-currency').on('input', function() {
+d3.select('#currency').on('input', function() {
     updateCurrency(this.value);
   });
 
@@ -392,15 +391,15 @@ var updateUnit = function(u) {
   d3.selectAll('.valueLabel')
       .text(function(d) {return currency + d.value + unit;});
 }
-d3.select('#value-unit').on('input', function() {
+d3.select('#unit').on('input', function() {
     updateUnit(this.value);
   });
 
 // Initialise the input to the proper values
 updateNodeSize(nodeSize);
-d3.select('#value-currency')
+d3.select('#currency')
     .property('value', currency);
-d3.select('#value-unit')
+d3.select('#unit')
     .property('value', unit);
 
 // Draw

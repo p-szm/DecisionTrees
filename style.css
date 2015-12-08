@@ -10,17 +10,38 @@ body {
   font-family: 'Source Sans Pro', sans-serif;
   font-weight: 300;
   font-size: 12px;
-  padding: 5px;
 }
 
 label {
   display: inline-block;
-  width: 240px;
-  text-align: right
+  width: 100px;
+  text-align: right;
+  margin-right: 5px;
 }
 
-.input-div {
-  margin-bottom: 10px;
+input#currency,
+input#unit {
+  width: 40px;
+}
+
+div.toolbar {
+  background-color: #eef5ee;
+  height: 100px;
+  margin-bottom: 15px;
+
+  display: webkit-flex;
+  display: flex;
+  webkit-flex-direction: column;
+  flex-direction: column;
+  webkit-flex-wrap: wrap;
+  flex-wrap: wrap;
+  webkit-align-content: flex-start;
+  align-content: flex-start;
+}
+
+div.toolbar-item {
+  max-width: 300px;
+  margin: 5px 10px;
 }
 
 svg {

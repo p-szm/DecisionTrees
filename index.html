@@ -11,25 +11,25 @@
     </style>
   </head>
   <body>
-    <div class='input-div'>
-      <label for="node-radius">
-        Node radius = <span id="node-radius-value">…</span>
-      </label>
-      <input type="range" min="1" max="80" id="node-radius">
-    </div>
-
-    <div class='input-div'>
-      <label for='value-currency'>
-        Value currency
-      </label>
-      <input type='text' value='$' id='value-currency'>
-    </div>
-
-    <div class='input-div'>
-      <label for='value-unit'>
-        Value Unit
-      </label>
-      <input type='text' value='m' id='value-unit'>
+    <div class='toolbar'>
+      <div class='toolbar-item'>
+        <label for="node-radius">
+          Node size = <span id="node-radius-value">…</span>
+        </label>
+        <input type="range" min="1" max="80" id="node-radius">
+      </div>
+      <div class='toolbar-item'>
+        <label for='currency'>
+          Currency
+        </label>
+        <input type='text' value='$' id='currency'>
+      </div>
+      <div class='toolbar-item'>
+        <label for='unit'>
+          Unit
+        </label>
+        <input type='text' value='m' id='unit'>
+      </div>
     </div>
 
     <script src="./bower_components/d3/d3.min.js"></script>
