@@ -50,7 +50,11 @@ vis.append('g')
 
 // Construct the tree layout
 var tree = d3.layout.tree()
-  .size([height, width]);
+  .size([height, width])
+  .separation(function(a, b) {
+    console.log(nodeSize);
+    return (a.parent == b.parent) ? nodeSize : 1.5*nodeSize;
+  });
 
 // Links generator
 var diagonal = d3.svg.diagonal()
@@ -178,8 +182,12 @@ var update = function(delay) {
   // Add entering nodes
   node.enter().append('rect')
       .classed('node', true)
-      .attr('x', function(d) {return (d.parent) ? d.parent.py-nodeSize*1.42/2 : d.y-nodeSize*1.42/2;})
-      .attr('y', function(d) {return (d.parent) ? d.parent.px-nodeSize*1.42/2 : d.x-nodeSize*1.42/2;})
+      .attr('x', function(d) {
+        return (d.parent) ? d.parent.py-nodeSize*1.42/2 : d.y-nodeSize*1.42/2;
+      })
+      .attr('y', function(d) {
+        return (d.parent) ? d.parent.px-nodeSize*1.42/2 : d.x-nodeSize*1.42/2;
+      })
       .attr('width', 1.42*nodeSize)
       .attr('height', 1.42*nodeSize)
       .on('mouseover', function(d) {
@@ -372,7 +380,7 @@ var updateNodeSize = function(nSize) {
   update(0);
 }
 d3.select('#node-radius').on('input', function() {
-    updateNodeSize(this.value);
+    updateNodeSize(parseInt(this.value));
   });
 
 // Currency
