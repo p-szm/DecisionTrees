@@ -287,7 +287,6 @@ var update = function(delay) {
 
   probabilityLabels.enter().append('text')
       .classed('probabilityLabel', true)
-      .text(function(d) {return d.probability + '%';})
       .attr('x', function(d){
         return (d.parent) ? d.parent.py-nodeSize : d.y-nodeSize;
       })
@@ -307,6 +306,14 @@ var update = function(delay) {
       })
       .on('mouseout', function(d) {
         d3.select(this).classed('highlight', false);
+      });
+
+  // Apply to all labels
+  probabilityLabels.text(function(d) {
+        if (d.parent && d.parent.type != 'decision')
+          return d.probability + '%';
+        else
+          return '';
       });
 
   probabilityLabels.exit().remove();

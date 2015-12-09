@@ -19,9 +19,18 @@ label {
   margin-right: 5px;
 }
 
+.nameLabel {
+  font-weight: bold;
+}
+
 input#currency,
 input#unit {
   width: 40px;
+}
+
+input#solve {
+  margin-top: 5px;
+  width: 100px;
 }
 
 div.toolbar {
