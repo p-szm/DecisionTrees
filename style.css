@@ -28,9 +28,14 @@ input#unit {
   width: 40px;
 }
 
-input#solve {
-  margin-top: 5px;
+input#solve,
+input#edit {
+  margin-top: 2px;
   width: 100px;
+}
+
+.disabled {
+  opacity: 0.2;
 }
 
 div.toolbar {
@@ -68,7 +73,7 @@ rect.node {
   fill: white;
   stroke: black;
   stroke-width: 1;
-  cursor: pointer
+  cursor: pointer;
 }
 
 rect.highlight {

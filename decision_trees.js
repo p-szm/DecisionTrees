@@ -7,11 +7,12 @@ var border = true;
 // Define the tree properties
 var nodeSize = 30,
   initialType = 'randomEvent',
-  initialValue = '0',
-  initialProbability = '0',
+  initialValue = 0,
+  initialProbability = 0,
   unit = '',
   currency = '$',
-  defaultDelay = 300;
+  defaultDelay = 300,
+  lock = false;
 
 // Create the svg area
 var svg = d3.select('body')
@@ -47,12 +48,13 @@ vis.append('g')
     .attr('id', 'nameLabels');
 vis.append('g')
     .attr('id', 'probabilityLabels');
+vis.append('g')
+    .attr('id', 'emvLabels');
 
 // Construct the tree layout
 var tree = d3.layout.tree()
   .size([height, width])
   .separation(function(a, b) {
-    console.log(nodeSize);
     return (a.parent == b.parent) ? nodeSize : 1.5*nodeSize;
   });
 
@@ -66,13 +68,16 @@ var data = {'id':0},
     nodes,
     links,
     valueLabels,
-    nameLabels;
+    nameLabels,
+    probabilityLabels,
+    emvLabels;
 
 // Menu
 var menu = [
   {
     title: 'Decision',
     action: function(elm, d, i) {
+      if (lock) return;
       d.type = 'decision';
       update(defaultDelay);
     }
@@ -80,6 +85,7 @@ var menu = [
   {
     title: 'Random event',
     action: function(elm, d, i) {
+      if (lock) return;
       d.type = 'randomEvent';
       update(defaultDelay);
     }
@@ -87,6 +93,7 @@ var menu = [
   {
     title: 'Remove children',
     action: function(elm, d, i) {
+      if (lock) return;
       d.children = null;
       update(defaultDelay);
     }
@@ -94,6 +101,7 @@ var menu = [
   {
     title: 'Remove node',
     action: function(elm, d, i) {
+      if (lock) return;
       if (d.parent) {
         for (var i = 0; i < d.parent.children.length; i++) {
           if (d.parent.children[i].id == d.id) {
@@ -191,14 +199,17 @@ var update = function(delay) {
       .attr('width', 1.42*nodeSize)
       .attr('height', 1.42*nodeSize)
       .on('mouseover', function(d) {
+        if (lock) return; 
         d3.select(this)
           .classed('highlight', true);
       })
       .on('mouseout', function(d) {
+        if (lock) return; 
         d3.select(this)
           .classed('highlight', false);
       })
       .on('click', function(d) {
+        if (lock) return; 
         if (d3.event.defaultPrevented) return;
 
         // Add new node
@@ -229,6 +240,9 @@ var update = function(delay) {
   probabilityLabels = d3.select('#probabilityLabels')
       .selectAll('text')
       .data(nodes, function(d) {return d.id;});
+  emvLabels = d3.select('#emvLabels')
+      .selectAll('text')
+      .data(nodes, function(d) {return d.id;});
 
   // Add new labels
   valueLabels.enter().append('text')
@@ -244,6 +258,7 @@ var update = function(delay) {
       })
       .attr('dy', '0.3em')
       .attr('text-anchor', 'end').on('click', function(d) {
+        if (lock) return;
         var result = prompt('Enter the value for the node', d.value);
         if(result) {
             d.value = parseFloat(result);
@@ -251,9 +266,11 @@ var update = function(delay) {
         }
       })
       .on('mouseover', function(d) {
+        if (lock) return;
           d3.select(this).classed('highlight', true);
       })
       .on('mouseout', function(d) {
+        if (lock) return;
         d3.select(this).classed('highlight', false);
       });
 
@@ -270,6 +287,7 @@ var update = function(delay) {
       })
       .attr('dy', '0.3em')
       .attr('text-anchor', 'end').on('click', function(d) {
+        if (lock) return;
         var result = prompt('Enter the name of the node', d.name);
         if(result) {
             d.name = result;
@@ -277,9 +295,11 @@ var update = function(delay) {
         }
       })
       .on('mouseover', function(d) {
+        if (lock) return;
           d3.select(this).classed('highlight', true);
       })
       .on('mouseout', function(d) {
+        if (lock) return;
         d3.select(this).classed('highlight', false);
       });
 
@@ -295,6 +315,7 @@ var update = function(delay) {
       })
       .attr('dy', '0.3em')
       .attr('text-anchor', 'end').on('click', function(d) {
+        if (lock) return;
         var result = prompt('Enter the probability for this random event', d.probability);
         if(result) {
             d.probability = result/100.0;
@@ -302,21 +323,40 @@ var update = function(delay) {
         }
       })
       .on('mouseover', function(d) {
+        if (lock) return;
           d3.select(this).classed('highlight', true);
       })
       .on('mouseout', function(d) {
+        if (lock) return;
         d3.select(this).classed('highlight', false);
       });
 
   // Apply to all labels
   probabilityLabels.text(function(d) {
         if (d.parent && d.parent.type != 'decision')
-          return d.probability + '%';
+          return d.probability * 100 + '%';
         else
           return '';
       });
 
   probabilityLabels.exit().remove();
+
+  emvLabels.enter().append('text')
+      .classed('emvLabel', true)
+      .attr('x', function(d){
+        return (d.parent) ? d.parent.py : d.y;
+      })
+      .attr('y', function(d) {
+        return (d.parent) ? d.parent.px : d.x;
+      })
+      .attr('dy', '0.3em')
+      .attr('text-anchor', 'middle');
+  
+  emvLabels.text(function(d) {
+    if (d.hasOwnProperty('emv'))
+      return parseFloat(d.emv.toFixed(3));
+    return '';
+  });
 
   // Transition nodes and links to their new positions.
   var t = svg.transition()
@@ -372,11 +412,14 @@ var update = function(delay) {
         .attr('x', function(d) {return d.y;})
         .attr('y', function(d) {return d.x-nodeSize/2-8})
         .attr('text-anchor', 'middle')
-        .attr('dy', '0');
+        .attr('dy', 0);
     t.selectAll('.probabilityLabel')
         .attr('x', function(d) {return d.y-nodeSize})
         .attr('y', function(d) {return d.x});
   }
+  t.selectAll('.emvLabel')
+      .attr('x', function(d) {return d.y;})
+      .attr('y', function(d) {return d.x;});
 }
 
 // For changing the node radius
@@ -409,6 +452,66 @@ var updateUnit = function(u) {
 d3.select('#unit').on('input', function() {
     updateUnit(this.value);
   });
+
+// Solve
+var solve = function() {
+  // Compute the Expected Monetary Value for the leaf nodes
+  var leafNodeEMV = function(node) {
+    var val = (node.value) ? node.value : 0;
+    return (node.parent) ? val + leafNodeEMV(node.parent) : val;
+  };
+
+  nodes.forEach(function(d) {
+    if (!d.children || d.children.length == 0) {
+      d.emv = leafNodeEMV(d);
+    }
+  });
+
+  // Compute the EMV for the rest of the nodes
+  var emv = function(node) {
+    if (node.hasOwnProperty('emv'))
+      return node.emv;
+    var p = 0;
+    if (node.type == 'randomEvent') {
+      node.children.forEach(function(child) {
+        p += child.probability * emv(child);
+        });
+    }
+    else {
+      // Get the maximum value of children's EMV
+      p = d3.max(node.children, function(child) {return emv(child);})
+    }
+    node.emv = p;
+    return p;
+  }
+
+  // Compute the EMV starting at the root
+  emv(data);
+}
+
+d3.select('#solve').on('click', function() {
+  solve();
+  lock = true;
+  d3.select(this).classed('disabled', true);
+  d3.select('#edit').classed('disabled', false);
+  update(true);
+})
+
+d3.select('#edit').on('click', function() {
+  // Remove all calculated EMV's
+  nodes.forEach(function(node) {
+    if (node.hasOwnProperty('emv')) {
+      delete node.emv;
+    }
+  })
+  lock = false;
+  d3.select(this).classed('disabled', true);
+  d3.select('#solve').classed('disabled', false);
+  update(true);
+})
+
+// Disable the Edit button
+d3.select('#edit').classed('disabled', true);
 
 // Initialise the input to the proper values
 updateNodeSize(nodeSize);
